@@ -1,0 +1,95 @@
+Notation:
+0   = not implemented
+*   = non-workig version
+**  = implemented
+*** = unit tested
+
+Features:
+
+Command loop                          **
+- Parse input line                    **
+- Call a command                      **
+
+A Assemble command                    **
+- Omit space routine                  ***
+- Find op code routine                ***
+- None, accumulator and implied modes ***
+- Immediate mode                      ***
+- Zero page mode                      ***
+- Zero page, x mode                   ***
+- Zero page, y mode                   ***
+- Absolute mode                       ***
+- Absolute, x mode                    ***
+- Absolute, y mode                    ***
+- Relative mode                       ***
+- (Indirect, x) mode                  ***
+- (Indirect), y mode                  ***
+- Absolute indirect mode              ***
+- Invalid mode                        ** 
+- (ZP indirect) 65c02 mode            ***
+- (Absolute indirect, x) 65c02 mode   ***
+
+C Compare two memory areas            **
+- Compare routine                     ***
+
+D Disassemble command                 **
+- Print line                          **
+- Disassemble opcode                  ***
+- None, accumulator and implied modes ***
+- Immediate mode                      ***
+- Zero page mode                      ***
+- Zero page, x mode                   ***
+- Zero page, y mode                   ***
+- Absolute mode                       ***
+- Absolute, x mode                    ***
+- Absolute, y mode                    ***
+- Relative mode                       ***
+- (Indirect, x) mode                  ***
+- (Indirect), y mode                  ***
+- Absolute indirect mode              ***
+- Invalid opcode                      **
+- (ZP indirect) 65c02 mode            ***
+- (Absolute indirect, x) 65c02 mode   ***
+- Print hex dump                      **
+
+F Fill up a memory area command       **
+- memset routine                      ***
+
+G Go to the memory address            **
+- Install BRK vector                  **
+- BRK routine (inc. saving registers) **
+- Jump (inc. loading registers)       **
+
+H Search the memory                   **
+
+J Jump to a subroutine                **
+- Loading registers                   **
+- Saving registers                    **
+- Return to the main loop routine     **
+
+L Load a file                         **
+- Load a file                         ***
+
+M Memory dump                         **
+- Print hex dump                      **
+- Print string                        **
+
+R registers                           **
+- Show registers                      **
+
+S Save a memory area                  **
+- Save a file                         ***
+
+T Transfer or copy a memory area      **
+- Memcpy routine                      ***
+
+V Verify a save file                  0
+- Verify a file                       0
+
+X Exit SturmMon                       **
+
+> Modify memory                       **
+
+. Alias for A assemble command        **
+
+; Change the register content         **

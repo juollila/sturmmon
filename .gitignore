@@ -1,0 +1,13 @@
+*.DS_Store
+*.swp
+*.o
+*.bin
+*.s
+sturmmon.iic
+sturmmon.xex
+sturmmon
+unittest/unittest1
+unittest/unittest2
+unittest/unittest3
+unittest/unittest4
+unittest/unittest5
