@@ -1,13 +1,14 @@
 ; SturmMon - Machine language monitor for 6502
 ; Coded by Juha Ollila
 ;
-; Aug 6  2017 - Initial version
-; Oct 14 2017 - Defines were moved to a separate file
-; Oct 28 2017 - Modified unit test interface
-; Nov 11 2017 - VIC-20 autostart support
-; Jan 7  2018 - Atari 8-bit support
-; Jun 24 2019 - Apple II support
-; Jul 11 2019 - Commodore 64's cartridge support
+; Aug 6  2017 Initial version
+; Oct 14 2017 Defines were moved to a separate file
+; Oct 28 2017 Modified unit test interface
+; Nov 11 2017 VIC-20 autostart support
+; Jan 7  2018 Atari 8-bit support
+; Jun 24 2019 Apple II support
+; Jul 11 2019 Commodore 64's cartridge support
+; Oct 17 2026 SturmSim is used in unit tests
 ;
 
 .ifndef UNITTEST
@@ -50,6 +51,40 @@
 
 
 .ifdef	UNITTEST
+	.export _memcmpvec
+	.export _memcpyvec
+	.export	_memsetvec
+	.export	_findvec
+	.export	_dumpvec
+	.export _loadvec
+	.export _savevec
+	.export _init_ut_chrout
+	.export chrout := _ut_chrout
+; custom chrout for unit tests
+_ut_chrout:
+	pha
+	txa
+	pha
+	; get byte back
+	tsx
+	lda	$102,x
+	ldx	$500
+	sta	$400,x
+	inc	$500
+	pla
+	tax
+	pla
+	rts
+; initialize unittest "screen"
+_init_ut_chrout:
+	lda	#'*'
+	ldx	#0
+@init1:
+	sta	$400,x
+	inx	
+	bne	@init1
+	stx	$500
+	rts
 	.include "define.asm"
 .endif
 .ifdef	COMMODORE
@@ -62,17 +97,6 @@
 	.include "apple-define.asm"
 .endif
 	
-
-; for unit tests
-.ifdef UNITTEST
-	.export _memcmpvec
-	.export _memcpyvec
-	.export	_memsetvec
-	.export	_findvec
-	.export	_dumpvec
-	.export _loadvec
-	.export _savevec
-.endif
 
 .ifdef C64
 .ifdef ROM
@@ -159,7 +183,6 @@ main2:
 .endif
 	
 
-.ifndef UNITTEST	
 	.include "memcmp.asm"
 	.include "memcpy.asm"
 	.include "memset.asm"
@@ -168,22 +191,17 @@ main2:
 	.include "dis.asm"
 	.include "asm.asm"
 	.include "petscii.asm"
+.ifndef UNITTEST	
 	.include "go.asm"
 	.include "register.asm"
 	.include "parser.asm"
+.else
+	.include "file.asm"
+.endif
 .ifdef	CMOS
 	.include "65c02.asm"
 .else
 	.include "6502.asm"
-.endif
-.else
-	.include "memcmp.asm"
-	.include "memcpy.asm"
-	.include "memset.asm"
-	.include "find.asm"
-	.include "dump.asm"
-	.include "petscii.asm"
-	.include "file.asm"
 .endif
 
 .ifdef	COMMODORE

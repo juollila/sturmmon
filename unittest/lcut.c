@@ -367,11 +367,11 @@ void* lcut_mock_obj(const char *fcname,
 
 void lcut_mock_obj_return(const char *symbol_name,
                           void *value,
-                          const char *fcname, 
-                          int lineno,
-                          const char *fname,
+                          const char *, 
+                          int,
+                          const char *,
                           int obj_type) {
-  
+
     lcut_symbol_t   *s  = NULL;
 
     s = lookup_symbol(symbol_name);

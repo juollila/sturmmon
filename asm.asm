@@ -10,6 +10,7 @@
 ; Oct 30 2017 Mode was added for disassembly part
 ; Jan 07 2018 Atari support
 ; Jun 26 2019 65c02 support
+; Oct 17 2026 SturmSim is used in unit tests
 ;
 
 
@@ -21,16 +22,6 @@ asm:	lda	pc
 
 .ifdef UNITTEST
 	.export	_asmtest
-        .include "define.asm"
-.ifdef CMOS
-	.include "65c02.asm"
-.else
-        .include "6502.asm"
-.endif
-	.include "find.asm"
-	.include "petscii.asm"
-_findvec:
-	jmp	hunt
 _asmtest:
 .endif
 

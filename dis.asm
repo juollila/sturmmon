@@ -14,12 +14,10 @@
 ; Jun 28 2019 Partial unit test support.
 ; Jun 29 2019 Opcode parsing was a little bit optimized.
 ; Jun 30 2019 If no end address then fixed number of lines are shown.
+; Oct 17 2026 SturmSim is used in unit tests
 
 .ifdef UNITTEST
 	.export	_distest
-        .include "define.asm"
-	.include "65c02.asm"
-	.include "petscii.asm"
 .endif
 
 ; disasm disassembles memory from start address to end address
@@ -81,8 +79,8 @@ _distest:
 	lda	#0	; set pc
 	sta	src
 	sta	src+1
-	lda	#$93	; clear screen
-	jsr	chrout
+	; lda	#$93	; clear screen
+	; jsr	chrout
 	lda	$200	; set parameters
 	ldx	$201
 	ldy	$202

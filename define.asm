@@ -30,7 +30,9 @@
 	chkin	= $ffc6
 	clrchn	= $ffcc
 	chrin	= $ffcf
+.ifndef UNITTEST
 	chrout	= $ffd2
+.endif
 	load	= $ffd5
 	save	= $ffd8
 	setmsg	= $ff90

@@ -1,5 +1,5 @@
 #include "lcut.h"
-#include "conio.h"
+#include "cbm.h"
 #include "stdio.h"
 #include "string.h"
 
@@ -48,33 +48,8 @@ void tc_assembler_test2(lcut_tc_t *tc, void *data) {
 
 unsigned char testSuite[18] = {'*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*'};
 
-void printSuites() {
-   clrscr();
-   gotoxy(0,0);
-   cprintf("Select assembler test suites:\r\n");
-   cprintf("(1) ADC      (%c)\r\n", testSuite[0]);
-   cprintf("(2) AND      (%c)\r\n", testSuite[1]);
-   cprintf("(3) ASL      (%c)\r\n", testSuite[2]);
-   cprintf("(4) Branches (%c)\r\n", testSuite[3]);
-   cprintf("(5) BIT      (%c)\r\n", testSuite[4]);
-   cprintf("(6) Implied  (%c)\r\n", testSuite[5]);
-   cprintf("(7) Compares (%c)\r\n", testSuite[6]);
-   cprintf("(8) DEC      (%c)\r\n", testSuite[7]);
-   cprintf("(9) EOR      (%c)\r\n", testSuite[8]);
-   cprintf("(0) INC      (%c)\r\n", testSuite[9]);
-   cprintf("(A) Jumps    (%c)\r\n", testSuite[10]);
-   cprintf("(B) Loads    (%c)\r\n", testSuite[11]);
-   cprintf("(C) LSR      (%c)\r\n", testSuite[12]);
-   cprintf("(D) ORA      (%c)\r\n", testSuite[13]);
-   cprintf("(E) ROL      (%c)\r\n", testSuite[14]);
-   cprintf("(F) ROR      (%c)\r\n", testSuite[15]);
-   cprintf("(G) SBC      (%c)\r\n", testSuite[16]);
-   cprintf("(H) Stores   (%c)\r\n", testSuite[17]);
-   cprintf("(R)un selected test suites\r\n");
-}
-
 void main() {
-   int tcindex, i;
+   int tcindex;
    char tctitle[64];
    lcut_ts_t *suiteADC = NULL;
    lcut_ts_t *suiteAND = NULL;
@@ -95,37 +70,7 @@ void main() {
    lcut_ts_t *suiteSBC = NULL;
    lcut_ts_t *suiteSTA = NULL;
    unsigned char key = NULL;
-   //char string[]= "ABC\r";
-   //struct param_struct param;
    LCUT_TEST_BEGIN("SturmMON - Assembler", NULL, NULL);
-
-   printSuites();
-   do{
-      key = cgetc();
-      /*
-      for(i=0;i<10;i++) {
-         if(key == i+1) if(testSuite[i]==' ') testSuite[i]='*'; else testSuite[i]=' ';
-      } */
-      if(key == '1') if(testSuite[0]==' ') testSuite[0]='*'; else testSuite[0]=' ';
-      if(key == '2') if(testSuite[1]==' ') testSuite[1]='*'; else testSuite[1]=' ';
-      if(key == '3') if(testSuite[2]==' ') testSuite[2]='*'; else testSuite[2]=' ';
-      if(key == '4') if(testSuite[3]==' ') testSuite[3]='*'; else testSuite[3]=' ';
-      if(key == '5') if(testSuite[4]==' ') testSuite[4]='*'; else testSuite[4]=' ';
-      if(key == '6') if(testSuite[5]==' ') testSuite[5]='*'; else testSuite[5]=' ';
-      if(key == '7') if(testSuite[6]==' ') testSuite[6]='*'; else testSuite[6]=' ';
-      if(key == '8') if(testSuite[7]==' ') testSuite[7]='*'; else testSuite[7]=' ';
-      if(key == '9') if(testSuite[8]==' ') testSuite[8]='*'; else testSuite[8]=' ';
-      if(key == '0') if(testSuite[9]==' ') testSuite[9]='*'; else testSuite[9]=' ';
-      if(key == 'a'||key == 'A') if(testSuite[10]==' ') testSuite[10]='*'; else testSuite[10]=' ';
-      if(key == 'b'||key == 'B') if(testSuite[11]==' ') testSuite[11]='*'; else testSuite[11]=' ';
-      if(key == 'c'||key == 'C') if(testSuite[12]==' ') testSuite[12]='*'; else testSuite[12]=' ';
-      if(key == 'd'||key == 'D') if(testSuite[13]==' ') testSuite[13]='*'; else testSuite[13]=' ';
-      if(key == 'e'||key == 'E') if(testSuite[14]==' ') testSuite[14]='*'; else testSuite[14]=' ';
-      if(key == 'f'||key == 'F') if(testSuite[15]==' ') testSuite[15]='*'; else testSuite[15]=' ';
-      if(key == 'g'||key == 'G') if(testSuite[16]==' ') testSuite[16]='*'; else testSuite[16]=' ';
-      if(key == 'h'||key == 'H') if(testSuite[17]==' ') testSuite[17]='*'; else testSuite[17]=' ';
-      printSuites();
-   }while(key!='r'&&key!='R');
 
    if(testSuite[0]=='*') {
       LCUT_TS_INIT(suiteADC, "Assembler - ADC", NULL, NULL);

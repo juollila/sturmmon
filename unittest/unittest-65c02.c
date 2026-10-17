@@ -1,5 +1,4 @@
 #include "lcut.h"
-#include "conio.h"
 #include "stdio.h"
 #include "string.h"
 
@@ -48,24 +47,8 @@ void tc_assembler_test2(lcut_tc_t *tc, void *data) {
 
 unsigned char testSuite[9] = {'*', '*', '*', '*', '*', '*', '*', '*', '*'};
 
-void printSuites() {
-   clrscr();
-   gotoxy(0,0);
-   cprintf("Select assembler test suites:\r\n");
-   cprintf("(1) (ZP) mode   (%c)\r\n", testSuite[0]);
-   cprintf("(2) BIT         (%c)\r\n", testSuite[1]);
-   cprintf("(3) DEC & INC A (%c)\r\n", testSuite[2]);
-   cprintf("(4) JMP (abs,X) (%c)\r\n", testSuite[3]);
-   cprintf("(5) BRA         (%c)\r\n", testSuite[4]);
-   cprintf("(6) Push & Pull (%c)\r\n", testSuite[5]);
-   cprintf("(7) STZ         (%c)\r\n", testSuite[6]);
-   cprintf("(8) TRB         (%c)\r\n", testSuite[7]);
-   cprintf("(9) TSB         (%c)\r\n", testSuite[8]);
-   cprintf("(R)un selected test suites\r\n");
-}
-
 void main() {
-   int tcindex, i;
+   int tcindex;
    char tctitle[64];
    lcut_ts_t *suiteZPM = NULL;
    lcut_ts_t *suiteBIT = NULL;
@@ -78,21 +61,6 @@ void main() {
    lcut_ts_t *suiteTSB = NULL;
    unsigned char key = NULL;
    LCUT_TEST_BEGIN("SturmMON - 65c02", NULL, NULL);
-
-   printSuites();
-   do{
-      key = cgetc();
-      if(key == '1') if(testSuite[0]==' ') testSuite[0]='*'; else testSuite[0]=' ';
-      if(key == '2') if(testSuite[1]==' ') testSuite[1]='*'; else testSuite[1]=' ';
-      if(key == '3') if(testSuite[2]==' ') testSuite[2]='*'; else testSuite[2]=' ';
-      if(key == '4') if(testSuite[3]==' ') testSuite[3]='*'; else testSuite[3]=' ';
-      if(key == '5') if(testSuite[4]==' ') testSuite[4]='*'; else testSuite[4]=' ';
-      if(key == '6') if(testSuite[5]==' ') testSuite[5]='*'; else testSuite[5]=' ';
-      if(key == '7') if(testSuite[6]==' ') testSuite[6]='*'; else testSuite[6]=' ';
-      if(key == '8') if(testSuite[7]==' ') testSuite[7]='*'; else testSuite[7]=' ';
-      if(key == '9') if(testSuite[8]==' ') testSuite[8]='*'; else testSuite[8]=' ';
-      printSuites();
-   }while(key!='r'&&key!='R');
 
    if(testSuite[0]=='*') {
       LCUT_TS_INIT(suiteZPM, "(ZP) mode", NULL, NULL);
