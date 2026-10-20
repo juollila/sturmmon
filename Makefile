@@ -8,8 +8,8 @@ apple:
 atari:
 	ca65 sturmmon.asm -t none -DATARI=1
 	ld65 sturmmon.o -t none -o sturmmon.xex
-	#cp sturmmon.exe /Applications/Atari800MacX/AtariExeFiles/
-	atr sturmmon.atr put sturmmon.xex autorun.sys
+	# cp sturmmon.exe /Applications/Atari800MacX/AtariExeFiles/
+	# atr sturmmon.atr put sturmmon.xex autorun.sys
 
 vic20rom:
 	ca65 sturmmon.asm -t none -DVICROM=1

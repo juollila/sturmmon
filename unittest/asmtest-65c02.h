@@ -17,4 +17,6 @@ extern param_struct phxdata[];
 extern param_struct stzdata[];
 extern param_struct trbdata[];
 extern param_struct tsbdata[];
+extern param_struct rmbdata[];
+extern param_struct smbdata[];
 

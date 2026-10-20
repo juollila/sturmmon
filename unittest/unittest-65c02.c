@@ -45,7 +45,7 @@ void tc_assembler_test2(lcut_tc_t *tc, void *data) {
    for(i=0; i<length; i++) LCUT_INT_EQUAL(tc, ((struct param_struct *)data)->result[i], *(CODE+i));
 }
 
-unsigned char testSuite[9] = {'*', '*', '*', '*', '*', '*', '*', '*', '*'};
+unsigned char testSuite[11] = {'*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*'};
 
 void main() {
    int tcindex;
@@ -59,6 +59,8 @@ void main() {
    lcut_ts_t *suiteSTZ = NULL;
    lcut_ts_t *suiteTRB = NULL;
    lcut_ts_t *suiteTSB = NULL;
+   lcut_ts_t *suiteRMB = NULL;
+   lcut_ts_t *suiteSMB = NULL;
    unsigned char key = NULL;
    LCUT_TEST_BEGIN("SturmMON - 65c02", NULL, NULL);
 
@@ -159,6 +161,28 @@ void main() {
          tcindex++;
       }
       LCUT_TS_ADD(suiteTSB);
+   }
+
+   if(testSuite[9]=='*') {
+      LCUT_TS_INIT(suiteRMB, "RMB", NULL, NULL);
+      tcindex = 0;
+      while (rmbdata[tcindex].input[0]!='*') {
+         sprintf(tctitle, "RMB %d", (tcindex+1));
+         LCUT_TC_ADD(suiteRMB, tctitle, tc_assembler_test1, (void *)&rmbdata[tcindex], NULL, NULL);
+         tcindex++;
+      }
+      LCUT_TS_ADD(suiteRMB);
+   }
+
+   if(testSuite[10]=='*') {
+      LCUT_TS_INIT(suiteSMB, "SMB", NULL, NULL);
+      tcindex = 0;
+      while (smbdata[tcindex].input[0]!='*') {
+         sprintf(tctitle, "SMB %d", (tcindex+1));
+         LCUT_TC_ADD(suiteSMB, tctitle, tc_assembler_test1, (void *)&smbdata[tcindex], NULL, NULL);
+         tcindex++;
+      }
+      LCUT_TS_ADD(suiteSMB);
    }
 
    LCUT_TEST_RUN();

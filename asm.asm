@@ -11,6 +11,7 @@
 ; Jan 07 2018 Atari support
 ; Jun 26 2019 65c02 support
 ; Oct 17 2026 SturmSim is used in unit tests
+; Oct 20 2026 65c02 rmb and smb insructions
 ;
 
 
@@ -62,6 +63,10 @@ _asmtest:
 	beq	@exit
 	jsr	@implied
 	bcc	@returnok
+.ifdef CMOS
+	jsr	@rmbsmb
+	bcc	@returnok
+.endif
 	jsr	@immediate
 	bcc	@returnok
 	jsr	@zero
@@ -218,9 +223,65 @@ _asmtest:
 @implied1:
 	pla
 	tax
-	clc
 	sec
 	rts
+
+; checks 65c02 rmb zp and smb zp instructions
+; return: carry set if not this mode
+;
+.ifdef CMOS
+@rmbsmb:
+	txa
+	pha
+	cpx	#8		; e.g. rmb0$aa+eol
+	bne	@rmbsmb1
+	ldy	#4
+	lda	buffer,y
+	cmp	#'$'
+	bne	@rmbsmb		; branch if 5th char is not $
+	dey
+	lda	buffer,y
+	cmp	#'0'
+	bcc	@rmbsmb1	; branch if 4th char < '0'
+	cmp	#'8'
+	bcs	@rmbsmb1	; branch if 4th char >= '8'
+	sec			; calculate opcode offset
+	sbc	#'0'
+	asl
+	asl
+	asl
+	asl
+	pha			; push offset ((4th char - '0') << 4) 	
+	lda	#14		; 65c02 rmb/smb mode
+	jsr	@findcode
+	bcs	@rmbsmb2	; branch if opcode was not found
+	tsx
+	adc	$101,x		; add offset to opcode
+	ldy	#0
+	sta	(pc),y		; store opcode
+	jsr	@incpc
+	pla			; remove offset from stack
+	ldy	#6		; read zero page address
+	lda	buffer,y
+	tay
+	ldx	#5
+	lda	buffer,x
+	jsr	pet2byte
+	ldy	#0
+	sta	(pc),y		; store operand byte
+	jsr	@incpc
+	pla
+	tax
+	clc
+	rts
+@rmbsmb2:
+	pla			; remove offset from stack
+@rmbsmb1:
+	pla
+	tax
+	sec
+	rts
+.endif
 
 ; checks immediate mode
 ; return: carry set if not immediate

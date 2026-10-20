@@ -15,6 +15,7 @@
 ; Jun 29 2019 Opcode parsing was a little bit optimized.
 ; Jun 30 2019 If no end address then fixed number of lines are shown.
 ; Oct 17 2026 SturmSim is used in unit tests
+; Oct 20 2026 65c02 rmb and smb insructions
 
 .ifdef UNITTEST
 	.export	_distest
@@ -132,17 +133,42 @@ disopcode:
 	iny
 	cpy	#3
 	bne	@disopcode1
-	jsr	printspc
+	; jsr	printspc
 	; pc = pc + 1
 	jsr	@updatepc1
 	; get addressing mode
 	lda	(opcode),y
 .ifdef CMOS
-	cmp	#14
+	cmp	#15
 .else
 	cmp	#12
 .endif
 	bcs	@exit
+.ifdef CMOS
+	; check if 65c02 rmb/smb instruction
+	cmp	#14
+	bcc	@disopcode3
+	pha
+	; print 4th character of mnemonic
+	tsx
+	lda	$104,x
+	lsr
+	lsr
+	lsr
+	lsr
+	clc
+	adc	#'0'
+	cmp	#'8'
+	bcc	@disopcode2
+	sbc	#8
+@disopcode2:
+	jsr	chrout
+	pla
+@disopcode3:
+.endif
+	pha
+	jsr	printspc
+	pla
 	asl
 	tay
 	lda	@addrmodes+1,y
@@ -155,7 +181,7 @@ disopcode:
 	.word	@absolute-1, @absolutex-1, @absolutey-1, @relative-1
 	.word	@indx-1, @indy-1, @indirect-1
 .ifdef CMOS
-	.word	@zpindirect-1, @absindirectx-1
+	.word	@zpindirect-1, @absindirectx-1, @zp-1
 .endif
 @exit:
 .ifdef UNITTEST
@@ -282,6 +308,7 @@ disopcode:
 	jsr	@updatepc2
 	jmp	@exit
 
+.ifdef CMOS
 ; handle zp indirect
 @zpindirect:
 	jsr	@printopen
@@ -300,6 +327,7 @@ disopcode:
 	jsr	@printclose
 	jsr	@updatepc2
 	jmp	@exit
+.endif
 
 .ifndef VICROM
 ; print hex dump for opcode and parameters
@@ -328,6 +356,8 @@ disopcode:
 	beq	@printhex2	; branch if addressing mode = 12
 	cmp	#13
 	beq	@printhex3	; branch if addressing mode = 13
+	cmp	#14
+	beq	@printhex2	; branch if addressing mode = 14
 	bne	@printhex1	; branch if addressing mode other than 13
 ;	bcs	@printhex1	; branch if addressing mode >=11 (i.e. 12)
 

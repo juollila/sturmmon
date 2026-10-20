@@ -72,3 +72,27 @@ param_struct tsbdata[] = {
   {"*",0,""}
 };
 
+param_struct rmbdata[] = {
+  {"RMB0 $12\r", 2, "\x07\x12"},
+  {"RMB1 $12\r", 2, "\x17\x12"},
+  {"RMB2 $12\r", 2, "\x27\x12"},
+  {"RMB3 $12\r", 2, "\x37\x12"},
+  {"RMB4 $12\r", 2, "\x47\x12"},
+  {"RMB5 $12\r", 2, "\x57\x12"},
+  {"RMB6 $12\r", 2, "\x67\x12"},
+  {"RMB7 $12\r", 2, "\x77\x12"},
+  {"*",0,""}
+};
+
+param_struct smbdata[] = {
+  {"SMB0 $EF\r", 2, "\x87\xef"},
+  {"SMB1 $EF\r", 2, "\x97\xef"},
+  {"SMB2 $EF\r", 2, "\xa7\xef"},
+  {"SMB3 $EF\r", 2, "\xb7\xef"},
+  {"SMB4 $EF\r", 2, "\xc7\xef"},
+  {"SMB5 $EF\r", 2, "\xd7\xef"},
+  {"SMB6 $EF\r", 2, "\xe7\xef"},
+  {"SMB7 $EF\r", 2, "\xf7\xef"},
+  {"*",0,""}
+};
+
