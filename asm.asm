@@ -12,6 +12,7 @@
 ; Jun 26 2019 65c02 support
 ; Oct 17 2026 SturmSim is used in unit tests
 ; Oct 20 2026 65c02 rmb and smb insructions
+; Oct 21 2026 65c02 wai, stp, bbr, bbs instructions
 ;
 
 
@@ -63,10 +64,6 @@ _asmtest:
 	beq	@exit
 	jsr	@implied
 	bcc	@returnok
-.ifdef CMOS
-	jsr	@rmbsmb
-	bcc	@returnok
-.endif
 	jsr	@immediate
 	bcc	@returnok
 	jsr	@zero
@@ -89,10 +86,16 @@ _asmtest:
 	bcc	@returnok
 	jsr	@indirect
 	bcc	@returnok
+.ifdef CMOS
 	jsr	@zpindirect
 	bcc	@returnok
 	jsr	@absindirectx
 	bcc	@returnok
+	jsr	@rmbsmb
+	bcc	@returnok
+	jsr	@bbrbbs
+	bcc	@returnok
+.endif
 	bcs	@error
 
 @error: jsr	primm
@@ -225,63 +228,6 @@ _asmtest:
 	tax
 	sec
 	rts
-
-; checks 65c02 rmb zp and smb zp instructions
-; return: carry set if not this mode
-;
-.ifdef CMOS
-@rmbsmb:
-	txa
-	pha
-	cpx	#8		; e.g. rmb0$aa+eol
-	bne	@rmbsmb1
-	ldy	#4
-	lda	buffer,y
-	cmp	#'$'
-	bne	@rmbsmb		; branch if 5th char is not $
-	dey
-	lda	buffer,y
-	cmp	#'0'
-	bcc	@rmbsmb1	; branch if 4th char < '0'
-	cmp	#'8'
-	bcs	@rmbsmb1	; branch if 4th char >= '8'
-	sec			; calculate opcode offset
-	sbc	#'0'
-	asl
-	asl
-	asl
-	asl
-	pha			; push offset ((4th char - '0') << 4) 	
-	lda	#14		; 65c02 rmb/smb mode
-	jsr	@findcode
-	bcs	@rmbsmb2	; branch if opcode was not found
-	tsx
-	adc	$101,x		; add offset to opcode
-	ldy	#0
-	sta	(pc),y		; store opcode
-	jsr	@incpc
-	pla			; remove offset from stack
-	ldy	#6		; read zero page address
-	lda	buffer,y
-	tay
-	ldx	#5
-	lda	buffer,x
-	jsr	pet2byte
-	ldy	#0
-	sta	(pc),y		; store operand byte
-	jsr	@incpc
-	pla
-	tax
-	clc
-	rts
-@rmbsmb2:
-	pla			; remove offset from stack
-@rmbsmb1:
-	pla
-	tax
-	sec
-	rts
-.endif
 
 ; checks immediate mode
 ; return: carry set if not immediate
@@ -641,7 +587,7 @@ _asmtest:
 	cmp	#','
 	beq	@relative1	; branch if zero page x or y mode
 @relative2:
-	lda	#8		; absolute mode
+	lda	#8		; relative mode
 	jsr	@findcode
 	bcs	@relative1	; branch if opcode was not found
 	ldy	#0
@@ -862,7 +808,9 @@ _asmtest:
 	clc
 	rts
 
-; checks zp indirect mode
+.ifdef CMOS
+
+; checks 65c02 zp indirect mode
 ; return: carry set if not indirect mode
 ;
 
@@ -909,7 +857,7 @@ _asmtest:
 	clc
 	rts
 
-; checks absolute indirect x mode
+; checks 65c02 absolute indirect x mode
 ; return: carry set if not absolute indirect x mode
 ;
 
@@ -968,4 +916,168 @@ _asmtest:
 	tax
 	clc
 	rts
+
+; checks 65c02 rmb zp and smb zp instructions
+; return: carry set if not this mode
+;
+
+@rmbsmb:
+	txa
+	pha
+	cpx	#8		; e.g. rmb0$aa+eol
+	bne	@rmbsmb1
+	ldy	#4
+	lda	buffer,y
+	cmp	#'$'
+	bne	@rmbsmb1	; branch if 5th char is not $
+	dey
+	lda	buffer,y
+	cmp	#'0'
+	bcc	@rmbsmb1	; branch if 4th char < '0'
+	cmp	#'8'
+	bcs	@rmbsmb1	; branch if 4th char >= '8'
+	sec			; calculate opcode offset
+	sbc	#'0'
+	asl
+	asl
+	asl
+	asl
+	pha			; push offset ((4th char - '0') << 4) 	
+	lda	#14		; 65c02 rmb/smb mode
+	jsr	@findcode
+	bcs	@rmbsmb2	; branch if opcode was not found
+	tsx
+	adc	$101,x		; add offset to opcode
+	ldy	#0
+	sta	(pc),y		; store opcode
+	jsr	@incpc
+	pla			; remove offset from stack
+	ldy	#6		; read zero page address
+	lda	buffer,y
+	tay
+	ldx	#5
+	lda	buffer,x
+	jsr	pet2byte
+	ldy	#0
+	sta	(pc),y		; store operand byte
+	jsr	@incpc
+	pla
+	tax
+	clc
+	rts
+@rmbsmb2:
+	pla			; remove offset from stack
+@rmbsmb1:
+	pla
+	tax
+	sec
+	rts
+
+; checks 65c02 zp relative mode (bbr and bbs instructions)
+; return: carry set if not this mode
+;
+
+@bbrbbs:
+	txa
+	pha
+	cpx	#14		; e.g. bbr0$aa,$1234+eol
+	bne	@bbrbbs1
+	ldy	#4
+	lda	buffer,y
+	cmp	#'$'
+	bne	@bbrbbs1	; branch if 5th char is not $
+	ldy	#7
+	lda	buffer,y
+	cmp	#','		; branch if 8th char is not ,
+	bne	@bbrbbs1
+	iny
+	lda	buffer,y
+	cmp	#'$'
+	bne	@bbrbbs1	; branch if 9th char is not $
+	ldy	#3
+	lda	buffer,y
+	cmp	#'0'
+	bcc	@bbrbbs1	; branch if 4th char < '0'
+	cmp	#'8'
+	bcs	@bbrbbs1	; branch if 4th char >= '8'
+	sec			; calculate opcode offset
+	sbc	#'0'
+	asl
+	asl
+	asl
+	asl
+	pha			; push offset ((4th char - '0') << 4) 	
+	lda	#15		; 65c02 zp relative mode
+	jsr	@findcode
+	bcc	@bbrbbs3	; branch if opcode was not found
+@bbrbbs2:
+	pla			; remove offset from stack
+@bbrbbs1:
+	pla
+	tax
+	sec
+	rts
+@bbrbbs3:
+	tsx
+	adc	$101,x		; add offset to opcode
+	ldy	#0
+	sta	(pc),y		; store opcode
+	jsr	@incpc
+	pla			; remove offset from stack
+	ldy	#6		; read zero page address
+	lda	buffer,y
+	tay
+	ldx	#5
+	lda	buffer,x
+	jsr	pet2byte
+	ldy	#0
+	sta	(pc),y		; store operand byte
+	jsr	@incpc
+	ldy	#10
+	lda	buffer,y
+	tay
+	ldx	#9
+	lda	buffer,x
+	jsr	pet2byte
+	pha			; store high byte
+	ldy	#12
+	lda	buffer,y
+	tay
+	ldx	#11
+	lda	buffer,x
+	jsr	pet2byte
+	pha			; store low byte
+	tsx			; calculate offset
+	ldy	#0
+	sec
+	lda	$101,x
+	sbc	pc
+	sta	$101,x		; store low byte of offset to stack
+	lda	$102,x
+	sbc	pc+1
+	sta	$102,x		; store high byte of offset to stack 
+	sec			; offset = offset - 1
+	lda	$101,x
+	sbc	#1
+	sta	$101,x
+	lda	$102,x
+	sbc	#0
+	sta	$102,x
+	pla
+	sta	(pc),y		; store low byte of offset
+	pla
+	cmp	#0
+	beq	@bbrbbs4	; branch if offset is ok
+	cmp	#$ff
+	bne	@bbrbbs1	; branch if offset is not ok
+@bbrbbs4:
+	jsr	@incpc
+	pla
+	tax
+	clc
+	rts
+
+
+.endif	; 65c02
+
 

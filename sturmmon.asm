@@ -159,7 +159,7 @@ main:
 	; set registers
 	jsr	initregisters
 	jsr	primm
-	.byte	eol,"STURMMON V0.15",eol,0
+	.byte	eol,"STURMMON V0.16",eol,0
 main2:
 	cld
 .endif

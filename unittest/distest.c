@@ -3,6 +3,7 @@
    Coded by Juha Ollila
 
    Jun 28 2019 Initial version.
+   Oct 21 2021 RMB, SMB, BBR and BBS instructions
 */
 
 #include "distest.h"
@@ -22,6 +23,10 @@ param_struct disdata[] = {
   {"\x6C\xCD\xAB", 11, "JMP ($ABCD)", 3},   /* indirect */
   {"\x92\x12\x00", 9,  "STA ($12)", 2},     /* zp indirect */
   {"\x7C\xCD\xAB", 13, "JMP ($ABCD,X)", 3}, /* absolute indirect x */
+  {"\x17\xCD\x00", 8, "RMB1 $CD", 2},       /* rmb / smb */
+  {"\xF7\xCD\x00", 8, "SMB7 $CD", 2},       /* rmb / smb */
+  {"\x1F\xCD\x7C", 14, "BBR1 $CD,$007F", 3},/* bbr / bbs*/
+  {"\xFF\xCD\x7C", 14, "BBS7 $CD,$007F", 3},/* bbr / bbs*/
   {"*",0,"",0}
 };
 

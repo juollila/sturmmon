@@ -19,4 +19,7 @@ extern param_struct trbdata[];
 extern param_struct tsbdata[];
 extern param_struct rmbdata[];
 extern param_struct smbdata[];
+extern param_struct waistpdata[];
+extern param_struct bbrdata[];
+extern param_struct bbsdata[];
 

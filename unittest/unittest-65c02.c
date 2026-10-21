@@ -45,7 +45,7 @@ void tc_assembler_test2(lcut_tc_t *tc, void *data) {
    for(i=0; i<length; i++) LCUT_INT_EQUAL(tc, ((struct param_struct *)data)->result[i], *(CODE+i));
 }
 
-unsigned char testSuite[11] = {'*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*'};
+unsigned char testSuite[14] = {'*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*'};
 
 void main() {
    int tcindex;
@@ -61,6 +61,9 @@ void main() {
    lcut_ts_t *suiteTSB = NULL;
    lcut_ts_t *suiteRMB = NULL;
    lcut_ts_t *suiteSMB = NULL;
+   lcut_ts_t *suiteWAI = NULL;
+   lcut_ts_t *suiteBBR = NULL;
+   lcut_ts_t *suiteBBS = NULL;
    unsigned char key = NULL;
    LCUT_TEST_BEGIN("SturmMON - 65c02", NULL, NULL);
 
@@ -183,6 +186,39 @@ void main() {
          tcindex++;
       }
       LCUT_TS_ADD(suiteSMB);
+   }
+
+   if(testSuite[11]=='*') {
+      LCUT_TS_INIT(suiteWAI, "WAI & STP", NULL, NULL);
+      tcindex = 0;
+      while (waistpdata[tcindex].input[0]!='*') {
+         sprintf(tctitle, "WAI & STP %d", (tcindex+1));
+         LCUT_TC_ADD(suiteWAI, tctitle, tc_assembler_test1, (void *)&waistpdata[tcindex], NULL, NULL);
+         tcindex++;
+      }
+      LCUT_TS_ADD(suiteWAI);
+   }
+
+   if(testSuite[12]=='*') {
+      LCUT_TS_INIT(suiteBBR, "BBR", NULL, NULL);
+      tcindex = 0;
+      while (bbrdata[tcindex].input[0]!='*') {
+         sprintf(tctitle, "BBR %d", (tcindex+1));
+         LCUT_TC_ADD(suiteBBR, tctitle, tc_assembler_test2, (void *)&bbrdata[tcindex], NULL, NULL);
+         tcindex++;
+      }
+      LCUT_TS_ADD(suiteBBR);
+   }
+
+   if(testSuite[13]=='*') {
+      LCUT_TS_INIT(suiteBBS, "BBS", NULL, NULL);
+      tcindex = 0;
+      while (bbsdata[tcindex].input[0]!='*') {
+         sprintf(tctitle, "BBS %d", (tcindex+1));
+         LCUT_TC_ADD(suiteBBS, tctitle, tc_assembler_test2, (void *)&bbsdata[tcindex], NULL, NULL);
+         tcindex++;
+      }
+      LCUT_TS_ADD(suiteBBS);
    }
 
    LCUT_TEST_RUN();

@@ -16,6 +16,7 @@
 ; Jun 30 2019 If no end address then fixed number of lines are shown.
 ; Oct 17 2026 SturmSim is used in unit tests
 ; Oct 20 2026 65c02 rmb and smb insructions
+; Oct 21 2026 65c02 wai, stp, bbr, bbs instructions
 
 .ifdef UNITTEST
 	.export	_distest
@@ -139,14 +140,15 @@ disopcode:
 	; get addressing mode
 	lda	(opcode),y
 .ifdef CMOS
-	cmp	#15
+	cmp	#16
 .else
 	cmp	#12
 .endif
 	bcs	@exit
 .ifdef CMOS
-	; check if 65c02 rmb/smb instruction
 	cmp	#14
+	; branch if not 65c02 rmb/smb/bbr/bbs instruction
+	; i.e. if not addressing mode 14 or 15
 	bcc	@disopcode3
 	pha
 	; print 4th character of mnemonic
@@ -181,7 +183,7 @@ disopcode:
 	.word	@absolute-1, @absolutex-1, @absolutey-1, @relative-1
 	.word	@indx-1, @indy-1, @indirect-1
 .ifdef CMOS
-	.word	@zpindirect-1, @absindirectx-1, @zp-1
+	.word	@zpindirect-1, @absindirectx-1, @zp-1, @zprelative-1
 .endif
 @exit:
 .ifdef UNITTEST
@@ -327,6 +329,39 @@ disopcode:
 	jsr	@printclose
 	jsr	@updatepc2
 	jmp	@exit
+; handle zero page relative
+@zprelative:
+	jsr	@printusd
+	jsr	@printbyte
+	lda	#','
+	jsr	chrout
+	jsr	@printusd
+	jsr	@updatepc2
+	; calculate address
+	tsx
+	lda	$101,x
+	cmp	#$80
+	bcc	@zprelative1
+	clc
+	adc	src
+	tax
+	lda	#$ff
+	adc	src+1
+	tay
+	txa
+	jsr	printword
+	jmp	@exit
+@zprelative1:
+	clc
+	adc	src
+	tax
+	lda	#0
+	adc	src+1
+	tay
+	txa
+	jsr	printword
+	jmp	@exit
+
 .endif
 
 .ifndef VICROM
@@ -358,6 +393,8 @@ disopcode:
 	beq	@printhex3	; branch if addressing mode = 13
 	cmp	#14
 	beq	@printhex2	; branch if addressing mode = 14
+	cmp	#15
+	beq	@printhex3	; branch if addressing mode = 15
 	bne	@printhex1	; branch if addressing mode other than 13
 ;	bcs	@printhex1	; branch if addressing mode >=11 (i.e. 12)
 

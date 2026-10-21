@@ -3,6 +3,9 @@
    Coded by Juha Ollila
 
    Jun 26 2019 Initial version.
+   Oct 20 2026 Unit tests for RMB and SMB instructions
+   Oct 21 2026 Unit tests for WAI and STP instructions
+   Oct 21 2026 Unit tests for BBR and BBS instructions
 */
 
 #include "asmtest-65c02.h"
@@ -93,6 +96,36 @@ param_struct smbdata[] = {
   {"SMB5 $EF\r", 2, "\xd7\xef"},
   {"SMB6 $EF\r", 2, "\xe7\xef"},
   {"SMB7 $EF\r", 2, "\xf7\xef"},
+  {"*",0,""}
+};
+
+param_struct waistpdata[] = {
+  {"WAI\r", 1, "\xcb"},
+  {"STP\r", 1, "\xdb"},
+  {"*",0,""}
+};
+
+param_struct bbrdata[] = {
+  {"BBR0 $DA,$CE05\r", 3, "\x0f\xda\x02"},
+  {"BBR1 $DA,$CE05\r", 3, "\x1f\xda\x02"},
+  {"BBR2 $DA,$CE05\r", 3, "\x2f\xda\x02"},
+  {"BBR3 $DA,$CE05\r", 3, "\x3f\xda\x02"},
+  {"BBR4 $DA,$CDF0\r", 3, "\x4f\xda\xed"},
+  {"BBR5 $DA,$CDF0\r", 3, "\x5f\xda\xed"},
+  {"BBR6 $DA,$CDF0\r", 3, "\x6f\xda\xed"},
+  {"BBR7 $DA,$CDF0\r", 3, "\x7f\xda\xed"},
+  {"*",0,""}
+};
+
+param_struct bbsdata[] = {
+  {"BBS0 $DA,$CE05\r", 3, "\x8f\xda\x02"},
+  {"BBS1 $DA,$CE05\r", 3, "\x9f\xda\x02"},
+  {"BBS2 $DA,$CE05\r", 3, "\xaf\xda\x02"},
+  {"BBS3 $DA,$CE05\r", 3, "\xbf\xda\x02"},
+  {"BBS4 $DA,$CDF0\r", 3, "\xcf\xda\xed"},
+  {"BBS5 $DA,$CDF0\r", 3, "\xdf\xda\xed"},
+  {"BBS6 $DA,$CDF0\r", 3, "\xef\xda\xed"},
+  {"BBS7 $DA,$CDF0\r", 3, "\xff\xda\xed"},
   {"*",0,""}
 };
 
